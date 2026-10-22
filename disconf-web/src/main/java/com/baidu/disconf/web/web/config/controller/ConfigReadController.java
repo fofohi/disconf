@@ -168,17 +168,18 @@ public class ConfigReadController extends BaseController {
         ConfListVo config = configMgr.getConfVo(configId);
 
         HttpHeaders header = new HttpHeaders();
-        byte[] res = config.getValue().getBytes();
-        if (res == null) {
-            throw new DocumentNotFoundException(config.getKey());
-        }
-
+        byte[] res;
         String name = null;
 
         try {
+            res = config.getValue().getBytes("UTF-8");
             name = URLEncoder.encode(config.getKey(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
+            res = config.getValue().getBytes();
             e.printStackTrace();
+        }
+        if (res == null) {
+            throw new DocumentNotFoundException(config.getKey());
         }
 
         header.set("Content-Disposition", "attachment; filename=" + name);

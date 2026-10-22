@@ -126,7 +126,8 @@ public class ConfigMgrImpl implements ConfigMgr {
 
                 File file = new File(curTime, config.getName());
                 try {
-                    FileUtils.writeByteArrayToFile(file, config.getValue().getBytes());
+                    FileUtils.writeByteArrayToFile(file,
+                            CodeUtils.unicodeToUtf8(config.getValue()).getBytes("UTF-8"));
                 } catch (IOException e) {
                     LOG.warn(e.toString());
                 }
