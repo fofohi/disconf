@@ -20,6 +20,7 @@ import com.baidu.disconf.web.service.config.bo.Config;
 import com.baidu.disconf.web.service.config.form.ConfForm;
 import com.baidu.disconf.web.service.config.service.ConfigFetchMgr;
 import com.baidu.disconf.web.service.config.utils.ConfigUtils;
+import com.baidu.disconf.web.utils.CodeUtils;
 import com.baidu.disconf.web.web.config.dto.ConfigFullModel;
 import com.baidu.disconf.web.web.config.validator.ConfigValidator;
 import com.baidu.disconf.web.web.config.validator.ConfigValidator4Fetch;
@@ -134,8 +135,8 @@ public class ConfigFetcherController extends BaseController {
                     hasError = true;
                     throw new DocumentNotFoundException(configModel.getKey());
                 }
-                //API获取节点内容也需要同样做格式转换
-                return downloadDspBill(configModel.getKey(), config.getValue());
+                // API获取节点内容也需要同样做格式转换
+                return downloadDspBill(configModel.getKey(), CodeUtils.unicodeToUtf8(config.getValue()));
 
             } catch (Exception e) {
                 LOG.error(e.toString());
@@ -159,13 +160,14 @@ public class ConfigFetcherController extends BaseController {
     public HttpEntity<byte[]> downloadDspBill(String fileName, String value) {
 
         HttpHeaders header = new HttpHeaders();
-        byte[] res = value.getBytes();
-
+        byte[] res;
         String name = null;
 
         try {
+            res = value.getBytes("UTF-8");
             name = URLEncoder.encode(fileName, "UTF-8");
         } catch (UnsupportedEncodingException e) {
+            res = value.getBytes();
             e.printStackTrace();
         }
 
